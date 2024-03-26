@@ -10,16 +10,9 @@ export const maxDuration = 500;
 export async function POST(req: Request, res: Response) {
   try {
     const session = await getAuthSession();
-    // if (!session?.user) {
-    //   return NextResponse.json(
-    //     { error: "You must be logged in to create a game." },
-    //     {
-    //       status: 401,
-    //     }
-    //   );
-    // }
     const body = await req.json();
-    const {amount, topic, type} = getQuestionsSchema.parse(body);
+    // const {amount, topic, type} = getQuestionsSchema.parse(body);
+    const {amount, topic, type} = body;
 
     // Define a maximum chunk size
     const chunkSize = 5; // Adjust this value as needed
@@ -83,7 +76,7 @@ export async function POST(req: Request, res: Response) {
     } else {
       console.error('elle gpt error', error);
       return NextResponse.json(
-        {error: 'An unexpected error occurred.'},
+        {error: 'An unexpected error occurred. ' + error},
         {
           status: 500,
         },
