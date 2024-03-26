@@ -2,21 +2,18 @@ import {prisma} from '@/lib/db';
 import {Clock, CopyCheck, Edit2} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import MCQCounter from './MCQCounter';
 
 type Props = {
   limit: number;
   userId: string;
 };
 
-const HistoryComponent = async ({limit, userId}: Props) => {
+const IncompleteGames = async ({limit, userId}: Props) => {
   const games = await prisma.game.findMany({
     take: limit,
     where: {
       userId,
-      NOT: {
-        timeEnded: null, // we only want to pull the games that have been completed
-      },
+      timeEnded: null, // fetch all the games that are not completed
     },
     orderBy: {
       timeStarted: 'desc',
@@ -34,11 +31,12 @@ const HistoryComponent = async ({limit, userId}: Props) => {
                 <Edit2 className="mr-3" />
               )}
               <div className="ml-4 space-y-1">
+                // Redirect them to go and complete the game
                 <Link
                   className="text-base font-medium leading-none underline"
-                  href={`/statistics/${game.id}`}>
+                  href={`/play/${game.gameType}/${game.id}`}>
                   {game.topic}
-                  <span className="text-muted-foreground">Completed</span>
+                  <span className="text-muted-foreground">Incomplete</span>
                 </Link>
                 <p className="flex items-center px-2 py-1 text-xs text-white rounded-lg w-fit bg-slate-800">
                   <Clock className="w-4 h-4 mr-1" />
@@ -56,4 +54,4 @@ const HistoryComponent = async ({limit, userId}: Props) => {
   );
 };
 
-export default HistoryComponent;
+export default IncompleteGames;
